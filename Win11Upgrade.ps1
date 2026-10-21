@@ -21,7 +21,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $script:AppName = 'Windows 11 Upgrade Manager'
-$script:AppVersion = '1.1.1'
+$script:AppVersion = '1.1.2'
 $script:OfficialPage = 'https://www.microsoft.com/software-download/windows11'
 $script:KnownStable = '26H2'  # Fallback only; actual offered upgrades discovered via WUA.
 $script:Settings = [ordered]@{
@@ -441,5 +441,5 @@ try { Run-Main }
 catch {
     Write-Log $_.Exception.ToString() 'FATAL'
     Say ('[FATAL] ' + $_.Exception.Message) 'Red'
-    exit 1
+    throw
 }
