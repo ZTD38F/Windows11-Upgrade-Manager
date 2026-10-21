@@ -21,7 +21,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $script:AppName = 'Windows 11 Upgrade Manager'
-$script:AppVersion = '1.1.0'
+$script:AppVersion = '1.1.1'
 $script:OfficialPage = 'https://www.microsoft.com/software-download/windows11'
 $script:KnownStable = '26H2'  # Fallback only; actual offered upgrades discovered via WUA.
 $script:Settings = [ordered]@{
@@ -376,6 +376,7 @@ function Run-Main {
         return
     }
     if ($env:OS -ne 'Windows_NT') { throw 'Windows 11 required.' }
+    Say '  [~] Проверяю установленную Windows, диск и состояние обновлений...' 'Cyan'
     $device = Get-Device
     if ($DiagnosticOnly) {
         Banner 'ДИАГНОСТИКА (БЕЗ ИЗМЕНЕНИЙ)'
