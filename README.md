@@ -7,10 +7,18 @@ Beautiful, interactive PowerShell 5.1 UI for upgrading Windows 11 **without wipi
 ## One-liner (Win + R → Ctrl + V → Enter)
 
 ```powershell
-powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference='Stop';$p=Join-Path $env:TEMP 'Win11Upgrade-Bootstrap.ps1';Invoke-WebRequest -UseBasicParsing -Uri 'https://raw.githubusercontent.com/ZTD38F/Windows11-Upgrade-Manager/main/bootstrap.ps1' -OutFile $p;& $p"
+powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -EncodedCommand JABFAHIAcgBvAHIAQQBjAHQAaQBvAG4AUAByAGUAZgBlAHIAZQBuAGMAZQA9ACcAUwB0AG8AcAAnADsAJABwAD0ASgBvAGkAbgAtAFAAYQB0AGgAIAAkAGUAbgB2ADoAVABFAE0AUAAgACcAVwBpAG4AMQAxAFUAcABnAHIAYQBkAGUALQBMAGEAdQBuAGMAaABlAHIALgBwAHMAMQAnADsASQBuAHYAbwBrAGUALQBXAGUAYgBSAGUAcQB1AGUAcwB0ACAALQBVAHMAZQBCAGEAcwBpAGMAUABhAHIAcwBpAG4AZwAgAC0AVQByAGkAIAAnAGgAdAB0AHAAcwA6AC8ALwByAGEAdwAuAGcAaQB0AGgAdQBiAHUAcwBlAHIAYwBvAG4AdABlAG4AdAAuAGMAbwBtAC8AWgBUAEQAMwA4AEYALwBXAGkAbgBkAG8AdwBzADEAMQAtAFUAcABnAHIAYQBkAGUALQBNAGEAbgBhAGcAZQByAC8AbQBhAGkAbgAvAGIAbwBvAHQAcwB0AHIAYQBwAC4AcABzADEAJwAgAC0ATwB1AHQARgBpAGwAZQAgACQAcAA7ACAAJgAgACQAcAA=
 ```
 
-The `-NoExit` option intentionally keeps the console visible on errors and after the program exits; it is useful for troubleshooting startup failures on real Windows 11 PCs.\n\nThis one-liner **downloads the bootstrap as a `.ps1` and executes the file**, rather than piping its contents to `Invoke-Expression` (which can misinterpret special PowerShell `#requires` directives).
+The terminal intentionally remains visible on errors and after exiting the program.\n\n**The preferred Win+R launcher uses `-EncodedCommand` (UTF-16LE) to avoid nested-quotation and character-encoding failures.** Its decoded body is fully readable and only downloads `bootstrap.ps1` over HTTPS into `%TEMP%`, then executes the local file. The `-NoExit` option keeps the console open if any error occurs. The encoding is not an integrity or security measure.
+
+Decoded launcher:
+
+```powershell
+$ErrorActionPreference='Stop';$p=Join-Path $env:TEMP 'Win11Upgrade-Launcher.ps1';Invoke-WebRequest -UseBasicParsing -Uri 'https://raw.githubusercontent.com/ZTD38F/Windows11-Upgrade-Manager/main/bootstrap.ps1' -OutFile $p; & $p
+```
+
+This one-liner **downloads the bootstrap as a `.ps1` and executes the file**, rather than piping its contents to `Invoke-Expression` (which can misinterpret special PowerShell `#requires` directives).
 
 **Security:** The bootstrap is delivered over HTTPS from the linked GitHub repository. It fetches the full script from the GitHub Contents API, validates Git blob SHA-1, saves a local `.ps1` file, and runs it without `Invoke-Expression`. The first-hop bootstrap is still fetched dynamically and should only be run if you trust the repository. For higher assurance, review the source and launch the downloaded local scripts. Enterprise application controls still apply.
 
