@@ -31,3 +31,7 @@ jobs:
           $results | Out-Host
           if ($LASTEXITCODE -ne 0) { throw "Menu startup failed: exit $LASTEXITCODE" }
           if (($results -join "`n") -notmatch 'UPGRADE MANAGER') { throw 'Menu never appeared' }
+      - name: Win+R encoded one-liner to interactive menu (piped exit)
+        shell: powershell
+        timeout-minutes: 3
+        run: .\tests\winr-launch.ps1
