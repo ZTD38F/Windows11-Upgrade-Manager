@@ -1,0 +1,16 @@
+name: PowerShell 5.1 tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  powershell-5_1:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate parser and offline behavior on Windows PowerShell 5.1
+        shell: powershell
+        run: .\tests\test.ps1
