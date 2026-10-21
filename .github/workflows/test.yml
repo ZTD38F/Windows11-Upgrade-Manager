@@ -30,4 +30,4 @@ jobs:
           $results = @('0' | powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Win11Upgrade.ps1 2>&1)
           $results | Out-Host
           if ($LASTEXITCODE -ne 0) { throw "Menu startup failed: exit $LASTEXITCODE" }
-          if (($results -join "`n") -notmatch 'Выбери действие') { throw 'Menu never appeared' }
+          if (($results -join "`n") -notmatch 'UPGRADE MANAGER') { throw 'Menu never appeared' }
