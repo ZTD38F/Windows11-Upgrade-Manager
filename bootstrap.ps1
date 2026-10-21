@@ -4,6 +4,12 @@ Secure one-line launcher for Windows 11 Upgrade Manager.
 Fetches source from the GitHub repository's content API, checks Git's blob digest,
 then launches it as a saved script (never Invoke-Expression).
 #>
+[CmdletBinding()]
+param(
+    [switch]$SelfTest,
+    [switch]$DiagnosticOnly,
+    [switch]$NoElevate
+)
 $ErrorActionPreference = 'Stop'
 $owner = 'ZTD38F'
 $repository = 'Windows11-Upgrade-Manager'
@@ -31,7 +37,7 @@ try {
     $file = Join-Path $dir ('Win11Upgrade-' + $actual.Substring(0,12) + '.ps1')
     [System.IO.File]::WriteAllBytes($file, $bytes)
     Write-Host ('  Verified Windows 11 Upgrade Manager | Git SHA ' + $actual.Substring(0,12)) -ForegroundColor Green
-    & $file
+    & $file @PSBoundParameters
 } catch {
     Write-Host ('  [FAILED] ' + $_.Exception.Message) -ForegroundColor Red
     throw
