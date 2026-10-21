@@ -14,3 +14,8 @@ jobs:
       - name: Validate parser and offline behavior on Windows PowerShell 5.1
         shell: powershell
         run: .\tests\test.ps1
+      - name: End-to-end Win+R-style launch from GitHub (read-only SelfTest)
+        shell: cmd
+        run: >-
+          powershell.exe -NoProfile -ExecutionPolicy Bypass -Command
+          "$ErrorActionPreference='Stop';$p=Join-Path $env:TEMP 'Win11Upgrade-Bootstrap.ps1';Invoke-WebRequest -UseBasicParsing -Uri 'https://raw.githubusercontent.com/ZTD38F/Windows11-Upgrade-Manager/main/bootstrap.ps1' -OutFile $p;& $p -SelfTest"
