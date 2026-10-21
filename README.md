@@ -7,8 +7,10 @@ Beautiful, interactive PowerShell 5.1 UI for upgrading Windows 11 **without wipi
 ## One-liner (Win + R → Ctrl + V → Enter)
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/ZTD38F/Windows11-Upgrade-Manager/main/bootstrap.ps1 | iex"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference='Stop';$p=Join-Path $env:TEMP 'Win11Upgrade-Bootstrap.ps1';Invoke-WebRequest -UseBasicParsing -Uri 'https://raw.githubusercontent.com/ZTD38F/Windows11-Upgrade-Manager/main/bootstrap.ps1' -OutFile $p;& $p"
 ```
+
+This one-liner **downloads the bootstrap as a `.ps1` and executes the file**, rather than piping its contents to `Invoke-Expression` (which can misinterpret special PowerShell `#requires` directives).
 
 **Security:** The bootstrap is delivered over HTTPS from the linked GitHub repository. It fetches the full script from the GitHub Contents API, validates Git blob SHA-1, saves a local `.ps1` file, and runs it without `Invoke-Expression`. The first-hop bootstrap is still fetched dynamically and should only be run if you trust the repository. For higher assurance, review the source and launch the downloaded local scripts. Enterprise application controls still apply.
 
@@ -38,6 +40,16 @@ The main menu and read-only diagnostics do not require administrator privileges.
 3. Official ISO / mounted media upgrade (compatible image required).
 4. Reboot, Dynamic Update, and quiet ISO installation settings.
 5. Diagnostics and official Microsoft release info.
+
+### Safe read-only check (uses the same download and launch path)
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference='Stop';$p=Join-Path $env:TEMP 'Win11Upgrade-Bootstrap.ps1';Invoke-WebRequest -UseBasicParsing -Uri 'https://raw.githubusercontent.com/ZTD38F/Windows11-Upgrade-Manager/main/bootstrap.ps1' -OutFile $p;& $p -SelfTest"
+```
+
+### Troubleshooting
+
+If the terminal stops before the menu, the printed `[FAILED]` or `[FATAL]` line and `%LOCALAPPDATA%\Windows11UpgradeManager\Logs` can help diagnose the failure. Some managed machines enforce PowerShell Constrained Language Mode or application control; this tool does not bypass those restrictions.
 
 Run locally after saving:
 
