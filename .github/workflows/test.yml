@@ -19,3 +19,15 @@ jobs:
         run: >-
           powershell.exe -NoProfile -ExecutionPolicy Bypass -Command
           "$ErrorActionPreference='Stop';$p=Join-Path $env:TEMP 'Win11Upgrade-Bootstrap.ps1';Invoke-WebRequest -UseBasicParsing -Uri 'https://raw.githubusercontent.com/ZTD38F/Windows11-Upgrade-Manager/main/bootstrap.ps1' -OutFile $p;& $p -SelfTest"
+      - name: Real Windows host diagnostics (read-only)
+        shell: powershell
+        timeout-minutes: 3
+        run: .\Win11Upgrade.ps1 -DiagnosticOnly
+      - name: Real Windows host menu smoke (select exit)
+        shell: powershell
+        timeout-minutes: 3
+        run: |
+          $results = @('0' | powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Win11Upgrade.ps1 2>&1)
+          $results | Out-Host
+          if ($LASTEXITCODE -ne 0) { throw "Menu startup failed: exit $LASTEXITCODE" }
+          if (($results -join "`n") -notmatch 'Выбери действие') { throw 'Menu never appeared' }
